@@ -9,7 +9,7 @@ public static int Arg1;
         int rem, num;
         num = Arg1;
         String hexadecimal="";
-        System.out.println("Converting the Decimal Value " + num + " to Hex...");
+        System.out.println("converting the Decimal Value " + num + " to Hex...");
 
         while(num != 0)
         {
