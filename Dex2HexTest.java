@@ -1,53 +1,62 @@
 
+import  java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import org.junit.*;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class Dex2HexTest {
 
-    private Dex2Hex dex2Hex;
+    // Instance of Dex2Hex (if needed for non-static methods in the future)
+    Dex2Hex dex2hex;
 
     @Before
     public void setUp() {
-        dex2Hex = new Dex2Hex();
+        // Initialize Dex2Hex if it contains non-static methods in the future
+        dex2hex = new Dex2Hex();
     }
 
     @Test
-    public void testConvertToHexadecimal() {
-        // Test case for a positive integer
-        assertEquals("The Hexadecimal representation should be 'A'", "A", convertAndCaptureOutput("10"));
-
-        // Test case for zero
-        assertEquals("The Hexadecimal representation of zero should be empty", "", convertAndCaptureOutput("0"));
-
-        // Test case for another integer
-        assertEquals("The Hexadecimal representation should be '1F4'", "1F4", convertAndCaptureOutput("500"));
+    public void testNoInput() {
+        String[] args = {};
+        String output = captureOutput(args);
+        assertEquals("Expected output for no input", 
+                     "Error: No input provided. Please enter an integer value.", 
+                     output.trim());
     }
 
     @Test
-    public void testInvalidInput() {
-        // Test for non-integer input
-        assertEquals("Should return an error message for non-integer input",
-                     "Error: Invalid input. Please provide an integer.",
-                     convertAndCaptureOutput("abc"));
+    public void testNonIntegerInput() {
+        String[] args = {"abc"};
+        String output = captureOutput(args);
+        assertEquals("Expected output for non-integer input", 
+                     "Error: Non-integer input provided. Please enter a valid integer value.", 
+                     output.trim());
     }
 
     @Test
-    public void testNoInputProvided() {
-        // Test for no input provided
-        assertEquals("Should return an error message for no input provided",
-                     "Error: No input provided Please provide an integer input.",
-                     convertAndCaptureOutput());
+    public void testValidIntegerInput() {
+        String[] args = {"255"};
+        String output = captureOutput(args);
+        assertEquals("Expected output for valid integer input", 
+                     "Converting the Decimal Value 255 to Hex...\nHexadecimal representation is: FF\nThe number has been converted successfully!", 
+                     output.trim());
     }
 
-    // Utility method to capture system output from Dex2Hex
-    private String convertAndCaptureOutput(String... args) {
-        java.io.ByteArrayOutputStream outputStream = new java.io.ByteArrayOutputStream();
-        System.setOut(new java.io.PrintStream(outputStream));
+    // Utility method to capture console output
+    private String captureOutput(String[] args) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outputStream));
+        
+        // Run Dex2Hex.main with the specified args
         Dex2Hex.main(args);
-        System.setOut(System.out); // Reset System.out
-        return outputStream.toString().trim();
+
+        // Restore original System.out
+        System.setOut(originalOut);
+
+        return outputStream.toString();
     }
 }
+
