@@ -4,7 +4,7 @@ class Dex2Hex {
     public static void main(String args[]) {
         // Check if no input is provided
         if (args.length == 0) {
-            System.out.println("Error: No input provided. Please enter an integer value.");
+            System.out.println("error: No input provided. Please enter an integer value.");
             return;
         }
 
