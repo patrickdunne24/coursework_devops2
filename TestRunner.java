@@ -21,7 +21,7 @@ public class TestRunner {
       }
       catch(Exception e)
       {
-          System.out.println("" + fails + " tests failed");
+          System.out.println("" + fails + " tests failed ");
           System.exit(1);
       }
       System.exit(0);
