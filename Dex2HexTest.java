@@ -8,13 +8,12 @@ import static org.junit.Assert.assertEquals;
 
 public class Dex2HexTest {
 
-    // Instance of Dex2Hex (if needed for non-static methods in the future)
+
     Dex2Hex dex2hex;
 
     @Before
     public void setUp() {
-        // Initialize Dex2Hex if it contains non-static methods in the future
-        dex2hex = new Dex2Hex();
+	      dex2hex = new Dex2Hex();
     }
 
     @Test
@@ -44,16 +43,16 @@ public class Dex2HexTest {
                      output.trim());
     }
 
-    // Utility method to capture console output
+
     private String captureOutput(String[] args) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
         
-        // Run Dex2Hex.main with the specified args
+
         Dex2Hex.main(args);
 
-        // Restore original System.out
+
         System.setOut(originalOut);
 
         return outputStream.toString();
