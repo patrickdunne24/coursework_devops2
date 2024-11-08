@@ -1,32 +1,39 @@
+import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.logging.*;
 import org.junit.*;
-import static org.junit.Assert.assertEquals;
 
 public class Dex2HexTest {
-
-    private static final Logger logger = Logger.getLogger(Dex2Hex.class.getName());
+    private static final Logger logger = Logger.getLogger(Dex2HexTest.class.getName());
     private ByteArrayOutputStream logStream;
     private StreamHandler testHandler;
 
     @Before
     public void setUp() {
         logStream = new ByteArrayOutputStream();
+        
+        // Custom formatter to capture only the message
         testHandler = new StreamHandler(new PrintStream(logStream), new SimpleFormatter() {
             @Override
-            public synchronized String format(LogRecord logrecord) {
-                return logrecord.getMessage() + "\n";  // Only log the message without metadata
+            public synchronized String format(LogRecord logRecord) {
+                return logRecord.getMessage() + "\n";
             }
         });
+        
+        // Add handler to both Dex2HexTest logger and Dex2Hex logger to capture both
+        Logger dex2HexLogger = Logger.getLogger(Dex2Hex.class.getName());
+        dex2HexLogger.addHandler(testHandler);
+        dex2HexLogger.setUseParentHandlers(false); // Avoids duplicate logs
 
         logger.addHandler(testHandler);
-        logger.setUseParentHandlers(false); // Avoids duplicate log entries in console
+        logger.setUseParentHandlers(false);
     }
 
     @After
     public void tearDown() {
         logger.removeHandler(testHandler);
+        Logger.getLogger(Dex2Hex.class.getName()).removeHandler(testHandler);
     }
 
     @Test
@@ -60,7 +67,8 @@ public class Dex2HexTest {
     }
 
     private void captureLoggerOutput(Runnable action) {
-        testHandler.flush(); // Clear any existing log messages
+        testHandler.flush(); // Ensure previous logs are flushed
+        logStream.reset(); // Clear the log stream
         action.run();
         testHandler.flush(); // Ensure all logs are captured
     }
