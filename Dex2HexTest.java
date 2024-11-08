@@ -13,8 +13,13 @@ public class Dex2HexTest {
     @Before
     public void setUp() {
         logStream = new ByteArrayOutputStream();
-        testHandler = new StreamHandler(new PrintStream(logStream), new SimpleFormatter());
-        
+        testHandler = new StreamHandler(new PrintStream(logStream), new SimpleFormatter() {
+            @Override
+            public synchronized String format(LogRecord record) {
+                return record.getMessage() + "\n";  // Only log the message without metadata
+            }
+        });
+
         logger.addHandler(testHandler);
         logger.setUseParentHandlers(false); // Avoids duplicate log entries in console
     }
@@ -47,9 +52,9 @@ public class Dex2HexTest {
         String[] args = {"255"};
         captureLoggerOutput(() -> Dex2Hex.main(args));
         
-        String expectedOutput = "INFO: Converting the Decimal Value 255 to Hex...\n" +
-                                "INFO: Hexadecimal representation is: FF\n" +
-                                "INFO: The number has been converted successfully!";
+        String expectedOutput = "Converting the Decimal Value 255 to Hex...\n" +
+                                "Hexadecimal representation is: FF\n" +
+                                "The number has been converted successfully!";
         String output = logStream.toString().trim();
         assertEquals(expectedOutput, output);
     }
@@ -60,4 +65,3 @@ public class Dex2HexTest {
         testHandler.flush(); // Ensure all logs are captured
     }
 }
-
