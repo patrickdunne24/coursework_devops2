@@ -1,48 +1,67 @@
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.logging.*;
+import org.junit.*;
+import static org.junit.Assert.assertEquals;
 
-class Dex2Hex {
+public class Dex2HexTest {
+
     private static final Logger logger = Logger.getLogger(Dex2Hex.class.getName());
+    private ByteArrayOutputStream logStream;
+    private StreamHandler testHandler;
 
-    static {
-        ConsoleHandler handler = new ConsoleHandler();
-        handler.setLevel(Level.ALL);  // Capture all log levels
-        logger.addHandler(handler);
-        logger.setUseParentHandlers(false);  // Disables default console output
+    @Before
+    public void setUp() {
+        logStream = new ByteArrayOutputStream();
+        testHandler = new StreamHandler(new PrintStream(logStream), new SimpleFormatter() {
+            @Override
+            public synchronized String format(LogRecord record) {
+                return record.getMessage() + "\n";  // Only log the message without metadata
+            }
+        });
+
+        logger.addHandler(testHandler);
+        logger.setUseParentHandlers(false); // Avoids duplicate log entries in console
     }
 
-    public static void main(String[] args) {
-        // Check if no input is provided
-        if (args.length == 0) {
-            logger.log(Level.SEVERE, "Error: No input provided. Please enter an integer value.");
-            return;
-        }
+    @After
+    public void tearDown() {
+        logger.removeHandler(testHandler);
+    }
 
-        int arg1;
-        try {
-            // Attempt to parse the input as an integer
-            arg1 = Integer.parseInt(args[0]);
-        } catch (NumberFormatException e) {
-            logger.log(Level.SEVERE, "Error: Non-integer input provided. Please enter a valid integer value.");
-            return;
-        }
+    @Test
+    public void testNoInput() {
+        String[] args = {};
+        captureLoggerOutput(() -> Dex2Hex.main(args));
+        
+        String output = logStream.toString().trim();
+        assertEquals("Error: No input provided. Please enter an integer value.", output);
+    }
 
-        // Proceed with the hex conversion if input is valid
-        char ch[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-        int rem, num = arg1;
-        String hexadecimal = "";
+    @Test
+    public void testNonIntegerInput() {
+        String[] args = {"abc"};
+        captureLoggerOutput(() -> Dex2Hex.main(args));
+        
+        String output = logStream.toString().trim();
+        assertEquals("Error: Non-integer input provided. Please enter a valid integer value.", output);
+    }
 
-        logger.log(Level.INFO, "Converting the Decimal Value {0} to Hex...", new Object[]{num});
+    @Test
+    public void testValidIntegerInput() {
+        String[] args = {"255"};
+        captureLoggerOutput(() -> Dex2Hex.main(args));
+        
+        String expectedOutput = "Converting the Decimal Value 255 to Hex...\n" +
+                                "Hexadecimal representation is: FF\n" +
+                                "The number has been converted successfully!";
+        String output = logStream.toString().trim();
+        assertEquals(expectedOutput, output);
+    }
 
-        while (num != 0) {
-            rem = num % 16;
-            hexadecimal = ch[rem] + hexadecimal;
-            num = num / 16;
-        }
-
-        logger.log(Level.INFO, "Hexadecimal representation is: {0}", new Object[]{hexadecimal});
-        logger.log(Level.INFO, "The number has been converted successfully!");
+    private void captureLoggerOutput(Runnable action) {
+        testHandler.flush(); // Clear any existing log messages
+        action.run();
+        testHandler.flush(); // Ensure all logs are captured
     }
 }
-

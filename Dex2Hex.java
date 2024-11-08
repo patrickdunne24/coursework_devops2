@@ -33,7 +33,7 @@ class Dex2Hex {
         int rem, num = arg1;
         String hexadecimal = "";
 
-        logger.log(Level.INFO, "Converting the Decimal Value {0} to Hex...", num);
+        logger.log(Level.INFO, "Converting the Decimal Value {0} to Hex...", new Object[]{num});
 
         while (num != 0) {
             rem = num % 16;
@@ -41,7 +41,7 @@ class Dex2Hex {
             num = num / 16;
         }
 
-        logger.log(Level.INFO, "Hexadecimal representation is: {0}", hexadecimal);
+        logger.log(Level.INFO, "Hexadecimal representation is: {0}", new Object[]{hexadecimal});
         logger.log(Level.INFO, "The number has been converted successfully!");
     }
 }
