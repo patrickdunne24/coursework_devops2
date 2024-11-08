@@ -41,7 +41,7 @@ class Dex2Hex {
             num = num / 16;
         }
 
-        logger.log(Level.INFO, "Hexadecimal representation is: {0}", new Object[]{hexadecimal});
+        logger.log(Level.INFO, "Hexadecimal representation is: {0}", hexadecimal);
         logger.log(Level.INFO, "The number has been converted successfully!");
     }
 }
