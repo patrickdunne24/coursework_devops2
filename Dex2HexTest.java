@@ -16,7 +16,7 @@ public class Dex2HexTest {
         testHandler = new StreamHandler(new PrintStream(logStream), new SimpleFormatter() {
             @Override
             public synchronized String format(LogRecord logrecord) {
-                return record.getMessage() + "\n";  // Only log the message without metadata
+                return logrecord.getMessage() + "\n";  // Only log the message without metadata
             }
         });
 
