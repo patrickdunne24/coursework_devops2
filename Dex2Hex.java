@@ -29,12 +29,13 @@ class Dex2Hex {
         }
 
         // Proceed with the hex conversion if input is valid
-        char ch[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-        int rem = arg1;
-	int num = arg1;
-        String hexadecimal = "";
+        char[] ch = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+        int rem;
+        int num = arg1;
+        StringBuilder hexadecimal = new StringBuilder();
 
-        logger.log(Level.INFO, "Converting the Decimal Value {0} to Hex...", new Object[]{num});
+        // Log the initial message with %d for the integer value
+        logger.log(Level.INFO, String.format("Converting the Decimal Value %d to Hex...", num));
 
         while (num != 0) {
             rem = num % 16;
@@ -42,7 +43,8 @@ class Dex2Hex {
             num = num / 16;
         }
 
-        logger.log(Level.INFO, "Hexadecimal representation is: {0}", hexadecimal);
+        // Log the final hexadecimal representation with %s
+        logger.log(Level.INFO, String.format("Hexadecimal representation is: %s", hexadecimal.toString()));
         logger.log(Level.INFO, "The number has been converted successfully!");
-	}
+    }
 }
