@@ -1,10 +1,21 @@
-
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class Dex2Hex {
+    private static final Logger logger = Logger.getLogger(Dex2Hex.class.getName());
+
+    static {
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setLevel(Level.ALL);  // Capture all log levels
+        logger.addHandler(handler);
+        logger.setUseParentHandlers(false);  // Disables default console output
+    }
+
     public static void main(String[] args) {
         // Check if no input is provided
         if (args.length == 0) {
-            System.out.println("Error: No input provided. Please enter an integer value.");
+            logger.log(Level.SEVERE, "Error: No input provided. Please enter an integer value.");
             return;
         }
 
@@ -13,7 +24,7 @@ class Dex2Hex {
             // Attempt to parse the input as an integer
             arg1 = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
-            System.out.println("Error: Non-integer input provided. Please enter a valid integer value.");
+            logger.log(Level.SEVERE, "Error: Non-integer input provided. Please enter a valid integer value.");
             return;
         }
 
@@ -22,7 +33,7 @@ class Dex2Hex {
         int rem, num = arg1;
         String hexadecimal = "";
 
-        System.out.println("Converting the Decimal Value " + num + " to Hex...");
+        logger.log(Level.INFO, "Converting the Decimal Value {0} to Hex...", num);
 
         while (num != 0) {
             rem = num % 16;
@@ -30,8 +41,7 @@ class Dex2Hex {
             num = num / 16;
         }
 
-        System.out.println("Hexadecimal representation is: " + hexadecimal);
-        System.out.println("The number has been converted successfully!");
+        logger.log(Level.INFO, "Hexadecimal representation is: {0}", hexadecimal);
+        logger.log(Level.INFO, "The number has been converted successfully!");
     }
 }
-

@@ -1,61 +1,63 @@
-
-import  java.io.ByteArrayOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.logging.*;
 import org.junit.*;
-import org.junit.Before;
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class Dex2HexTest {
 
-
-    Dex2Hex dex2hex;
+    private static final Logger logger = Logger.getLogger(Dex2Hex.class.getName());
+    private ByteArrayOutputStream logStream;
+    private StreamHandler testHandler;
 
     @Before
     public void setUp() {
-	      dex2hex = new Dex2Hex();
+        logStream = new ByteArrayOutputStream();
+        testHandler = new StreamHandler(new PrintStream(logStream), new SimpleFormatter());
+        
+        logger.addHandler(testHandler);
+        logger.setUseParentHandlers(false); // Avoids duplicate log entries in console
+    }
+
+    @After
+    public void tearDown() {
+        logger.removeHandler(testHandler);
     }
 
     @Test
     public void testNoInput() {
         String[] args = {};
-        String output = captureOutput(args);
-        assertEquals("Expected output for no input", 
-                     "Error: No input provided. Please enter an integer value.", 
-                     output.trim());
+        captureLoggerOutput(() -> Dex2Hex.main(args));
+        
+        String output = logStream.toString().trim();
+        assertEquals("Error: No input provided. Please enter an integer value.", output);
     }
 
     @Test
     public void testNonIntegerInput() {
         String[] args = {"abc"};
-        String output = captureOutput(args);
-        assertEquals("Expected output for non-integer input", 
-                     "Error: Non-integer input provided. Please enter a valid integer value.", 
-                     output.trim());
+        captureLoggerOutput(() -> Dex2Hex.main(args));
+        
+        String output = logStream.toString().trim();
+        assertEquals("Error: Non-integer input provided. Please enter a valid integer value.", output);
     }
 
     @Test
     public void testValidIntegerInput() {
         String[] args = {"255"};
-        String output = captureOutput(args);
-        assertEquals("Expected output for valid integer input", 
-                     "Converting the Decimal Value 255 to Hex...\nHexadecimal representation is: FF\nThe number has been converted successfully!", 
-                     output.trim());
+        captureLoggerOutput(() -> Dex2Hex.main(args));
+        
+        String expectedOutput = "INFO: Converting the Decimal Value 255 to Hex...\n" +
+                                "INFO: Hexadecimal representation is: FF\n" +
+                                "INFO: The number has been converted successfully!";
+        String output = logStream.toString().trim();
+        assertEquals(expectedOutput, output);
     }
 
-
-    private String captureOutput(String[] args) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outputStream));
-        
-
-        Dex2Hex.main(args);
-
-
-        System.setOut(originalOut);
-
-        return outputStream.toString();
+    private void captureLoggerOutput(Runnable action) {
+        testHandler.flush(); // Clear any existing log messages
+        action.run();
+        testHandler.flush(); // Ensure all logs are captured
     }
 }
 
