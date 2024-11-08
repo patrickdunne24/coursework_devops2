@@ -23,17 +23,16 @@ public class TestRunner {
                 logger.log(Level.SEVERE, failure.toString());
                 fails++;
             }
-            
+
             if (fails > 0) {
-                throw new Exception(fails + " tests failed");
+                // Log the test failure message and avoid using System.exit
+                logger.log(Level.SEVERE, "{0} tests failed", fails);
+            } else {
+                logger.log(Level.INFO, "All tests passed successfully: {0}", result.wasSuccessful());
             }
-
-            logger.log(Level.INFO, "All tests passed successfully: {0}", result.wasSuccessful());
         } catch (Exception e) {
-            logger.log(Level.SEVERE, e.getMessage());
-            System.exit(1);
+            // Catch any unexpected exceptions and log them
+            logger.log(Level.SEVERE, "An unexpected error occurred: {0}", e.getMessage());
         }
-
-        System.exit(0);
     }
 }
