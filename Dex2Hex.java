@@ -34,8 +34,11 @@ class Dex2Hex {
         int num = arg1;
         StringBuilder hexadecimal = new StringBuilder();
 
-        // Log the initial message with %d for the integer value
-        logger.log(Level.INFO, String.format("Converting the Decimal Value %d to Hex...", num));
+        
+        // Log the initial message with %d for the integer value only if INFO logging is enabled
+        if (logger.isLoggable(Level.INFO)) {
+            logger.log(Level.INFO, String.format("Converting the Decimal Value %d to Hex...", num));
+        }
 
         while (num != 0) {
             rem = num % 16;
@@ -44,7 +47,10 @@ class Dex2Hex {
         }
 
         // Log the final hexadecimal representation with %s
-        logger.log(Level.INFO, String.format("Hexadecimal representation is: %s", hexadecimal.toString()));
-        logger.log(Level.INFO, "The number has been converted successfully!");
+        if (logger.isLoggable(Level.INFO)) {
+            logger.log(Level.INFO, String.format("Hexadecimal representation is: %s", hexadecimal.toString()));
+            logger.log(Level.INFO, "The number has been converted successfully!");
+        }
+        
     }
 }
