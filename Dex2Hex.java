@@ -30,18 +30,19 @@ class Dex2Hex {
 
         // Proceed with the hex conversion if input is valid
         char ch[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-        int rem, num = arg1;
+        int rem = arg1;
+	int num = arg1;
         String hexadecimal = "";
 
         logger.log(Level.INFO, "Converting the Decimal Value {0} to Hex...", new Object[]{num});
 
         while (num != 0) {
             rem = num % 16;
-            hexadecimal = ch[rem] + hexadecimal;
+            hexadecimal.insert(0, ch[rem]);  // Prepend the character to build hex representation
             num = num / 16;
         }
 
-        logger.log(Level.INFO, "Hexadecimal representation is: {0}", hexadecimal);
+        logger.log(Level.INFO, "Hexadecimal representation is: {0}", hexadecimal.toString());
         logger.log(Level.INFO, "The number has been converted successfully!");
-    }
+	}
 }
